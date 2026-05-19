@@ -30,13 +30,14 @@ Install Mysql and configure it.
     sudo systemctl enable mysql
 
 The following code should be run as root user.
+
 database name: "acervo"
 database user: "user"
 database pass: "1123"
 
     mysql -uroot
 
-the following code should be run in mysql console. 
+The following code should be run in mysql console. 
     
     CREATE DATABASE acervo;
     CREATE USER user@localhost identified by '1123';
@@ -47,7 +48,6 @@ Install the package git and execute the command git clone.
     sudo apt install git 
     sudo /var/www/html/    
     sudo git clone https://github.com/reynaldocv/collectiveaccess-wikidata-ulan.git
-
     
     sudo systemctl restart apache2
     
