@@ -15,7 +15,7 @@ Install repository
 
 Install PHP 8.2
 
-    sudo apt install -y php libapache2-mod-php8.2 php8.2-mbstring php8.2-xmlrpc php8.2-gd php8.2-xml php8.2-intl php8.2-mysql php8.2-cli php8.2-zip php8.2-curl php8.2-posix php8.2-dev php8.2-redis php8.2-gmagick php8.2-gmp
+    sudo apt install -y php libapache2-mod-php8.4 php8.4-mbstring php8.4-xmlrpc php8.4-gd php8.4-xml php8.4-intl php8.4-mysql php8.4-cli php8.4-zip php8.4-curl php8.4-posix php8.4-dev php8.4-redis php8.4-gmagick php8.4-gmp
 
 Install packages to support data cache and proccessing media files
 
