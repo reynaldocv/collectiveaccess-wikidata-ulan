@@ -17,6 +17,8 @@ Install PHP 8.2
 
     sudo apt install -y php libapache2-mod-php8.4 php8.4-mbstring php8.4-xmlrpc php8.4-gd php8.4-xml php8.4-intl php8.4-mysql php8.4-cli php8.4-zip php8.4-curl php8.4-posix php8.4-dev php8.4-redis php8.4-gmagick php8.4-gmp
 
+    sudo a2enmod php8.4
+
 Install packages to support data cache and proccessing media files
 
     apt install -y ghostscript libgraphicsmagick1-dev libpoppler-dev poppler-utils dcraw redis-server ffmpeg libimage-exiftool-perl libreoffice mediainfo 
@@ -45,6 +47,9 @@ Install the package git and execute the command git clone.
     sudo apt install git 
     sudo /var/www/html/    
     sudo git clone https://github.com/reynaldocv/collectiveaccess-wikidata-ulan.git
+
+    
+    sudo systemctl restart apache2
     
 
     
