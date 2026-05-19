@@ -53,8 +53,8 @@ Install the package git and execute the command git clone.
 
 Now, enter the following link: http://localhost/collectiveaccess-wikidata-ulan/
 
-**user**: administrator
-**password**: administrator
+    - **user**: administrator
+    - **password**: administrator
 
 
     
