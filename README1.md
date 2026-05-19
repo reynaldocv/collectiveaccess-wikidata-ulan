@@ -43,7 +43,8 @@ the following code should be run in mysql console.
 Install the package git and execute the command git clone. 
     sudo apt install git 
     sudo /var/www/html/
-        sudo git clone https://github.com/reynaldocv/collectiveaccess-wikidata-ulan.git
+    
+    sudo git clone https://github.com/reynaldocv/collectiveaccess-wikidata-ulan.git
     
 
     
