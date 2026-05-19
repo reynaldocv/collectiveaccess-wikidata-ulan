@@ -31,9 +31,9 @@ Install Mysql and configure it.
 
 The following code should be run as root user.
 
-database name: "acervo"
-database user: "user"
-database pass: "1123"
+- **database name**: "acervo"
+- **database user**: "user"
+- **database pass**: "1123"
 
     mysql -uroot
 
