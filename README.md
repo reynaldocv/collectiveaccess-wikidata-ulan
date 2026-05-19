@@ -57,6 +57,8 @@ Now, enter the following link: http://localhost/collectiveaccess-wikidata-ulan/
 - **password**: administrator
 
 
+
+
     
 
     
