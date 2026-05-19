@@ -1,3 +1,3 @@
 # Collectiveaccess 2.0.11 - wikidata and ulan plugin 
 
-### Install Collectiveaccess on Ubuntu 22.04
+### Install Collectiveaccess 2.0.11 on Ubuntu 22.04
