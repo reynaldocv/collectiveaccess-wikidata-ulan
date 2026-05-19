@@ -50,6 +50,13 @@ Install the package git and execute the command git clone.
     sudo git clone https://github.com/reynaldocv/collectiveaccess-wikidata-ulan.git
     
     sudo systemctl restart apache2
+
+Now, enter the following link: http://localhost/collectiveaccess-wikidata-ulan/
+
+**user**: administrator
+**password**: administrator
+
+
     
 
     
