@@ -1,0 +1,291 @@
+#!/usr/bin/env php
+<?php
+/** ---------------------------------------------------------------------
+ * support/bin/caUtils :
+ * ----------------------------------------------------------------------
+ * CollectiveAccess
+ * Open-source collections management software
+ * ----------------------------------------------------------------------
+ *
+ * Software by Whirl-i-Gig (http://www.whirl-i-gig.com)
+ * Copyright 2013-2026 Whirl-i-Gig
+ *
+ * For more information visit http://www.CollectiveAccess.org
+ *
+ * This program is free software; you may redistribute it and/or modify it under
+ * the terms of the provided license as published by Whirl-i-Gig
+ *
+ * CollectiveAccess is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTIES whatsoever, including any implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * This source code is free and modifiable under the terms of
+ * GNU General Public License. (http://www.gnu.org/copyleft/gpl.html). See
+ * the "license.txt" file for details, or visit the CollectiveAccess web site at
+ * http://www.CollectiveAccess.org
+ *
+ * @package CollectiveAccess
+ * @subpackage Utils
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License version 3
+ *
+ * ----------------------------------------------------------------------
+ */
+if (!_caUtilsLoadSetupPHP()) {
+    die("Could not find your CollectiveAccess setup.php file! Please set the COLLECTIVEACCESS_HOME environment variable to the location of your CollectiveAccess installation, or run this command from a sub-directory of your CollectiveAccess installation.\n");
+}
+require_once(__CA_MODELS_DIR__."/ca_locales.php");
+require_once(__CA_APP_DIR__."/helpers/utilityHelpers.php");
+require_once(__CA_APP_DIR__."/helpers/CLIHelpers.php");
+require_once(__CA_LIB_DIR__."/Utils/CLIUtils.php");
+require_once(__CA_LIB_DIR__."/ApplicationPluginManager.php");
+
+if (!caIsRunFromCLI()) {
+    die("Sorry, caUtils must be run from the command line!\n");
+}
+
+$o_config = Configuration::load();
+$g_ui_locale = $o_config->get('locale_default');
+$t_locale = new ca_locales();
+$error_code = 1;
+
+try {
+    $g_ui_locale_id = $t_locale->getDb()->getFieldsFromTable('ca_locales') ? $t_locale->localeCodeToID($g_ui_locale) : -1; // get current UI locale as locale_id (available as global)
+} catch(Exception $e) {
+    $g_ui_locale_id = -1;
+}
+
+initializeLocale($g_ui_locale);
+
+$o_app_plugin_manager = new ApplicationPluginManager();
+
+$cmd = $argv[1];
+$cmd_proc = strtolower(str_replace("-", "_", $cmd));
+
+//
+// Check for plug-in commands
+//
+$plugin_commands_by_class = $o_app_plugin_manager->hookCLICaUtilsGetCommands($plugin_commands = array());
+$plugin_commands = array();
+foreach($plugin_commands_by_class as $class => $commands) {
+    foreach($commands as $command => $command_info) {
+        unset($plugin_commands_by_class[$class][$command]);
+        $plugin_commands_by_class[$class][strtolower($command)] = $command_info;
+        $plugin_commands[strtolower($command)] = $class;
+    }
+}
+if ($vb_is_plugin_command = isset($plugin_commands[$cmd_proc])) {
+    $command_opts = is_array($plugin_commands_by_class[$plugin_commands[$cmd_proc]][$cmd_proc]['Options']) ? $plugin_commands_by_class[$plugin_commands[$cmd_proc]][$cmd_proc]['Options'] : array();
+} else {
+    $command_opts = method_exists("CLIUtils", "{$cmd_proc}ParamList") ? call_user_func("CLIUtils::{$cmd_proc}ParamList") : array();
+}
+
+$available_cli_opts = array_merge(array(
+        "hostname-s" => _t('Hostname of installation. If omitted default installation is used.'),
+        "setup-s" => _t('Specify the path to an alternate setup.php.'),
+        "quiet" => _t('Do not emit headers and copyright information.'),
+        "disable-item-level-access-control" => _t('Disable item level access control while running command.')
+    ), $command_opts);
+
+try {
+    $o_opts = new Zend_Console_Getopt($available_cli_opts);
+    $o_opts->parse();
+} catch(Exception $e) {
+    die(_t("Invalid options specified (%1). Try 'caUtils help' to view list of valid options.", $e->getMessage())."\n");
+}
+if ($hostname = $o_opts->getOption('hostname')) {
+    $_SERVER['HTTP_HOST'] = $hostname;
+}
+
+$quiet = (bool)$o_opts->getOption('quiet');
+$disable_acl = (bool)$o_opts->getOption('disable-item-level-access-control');
+if($disable_acl) { 
+    if(!defined('__CA_DISABLE_ACL__')) {
+        define('__CA_DISABLE_ACL__', true);
+    } elseif(__CA_DISABLE_ACL__) {
+        die(_t('Cannot disable item level access control because it is force-enabled'));
+    }
+}
+
+$args = $o_opts->getRemainingArgs();
+
+$app_heading = $quiet ? '' : CLIUtils::textWithColor(_t("CollectiveAccess %1 (%2/%3) Utilities\n(c) 2013-2026 Whirl-i-Gig",__CollectiveAccess__, __CollectiveAccess_Schema_Rev__, __CollectiveAccess_Release_Type__), "bold_blue")."\n\n";
+
+print $app_heading;
+
+if (method_exists("CLIUtils", $cmd_proc) || ($vb_is_plugin_command) || (($cmd_proc === 'help') && (sizeof($args) > 1))) {
+    if ((sizeof($args) > 1) && ((strtolower($args[1]) === 'help') || ($cmd_proc === 'help'))) {
+        //
+        // Full-length help for command
+        //
+        if ($cmd_proc === 'help') {
+            $cmd = $args[1];
+            $cmd_proc = strtolower(str_replace("-", "_", $args[1]));
+            $vb_is_plugin_command = isset($plugin_commands[$cmd_proc]);
+        }
+
+
+        if ((method_exists("CLIUtils", $cmd_proc)) || $vb_is_plugin_command) {
+
+            if ($vb_is_plugin_command) {
+                $plugin_command_info = $plugin_commands_by_class[$plugin_commands[$cmd_proc]][$cmd_proc];
+
+                $short_help = $plugin_command_info['ShortHelp'];
+                $opts = $plugin_command_info['Options'];
+            } else {
+                $short_help = call_user_func_array("CLIUtils::{$cmd_proc}Help", array($o_opts));
+                $opts = call_user_func_array("CLIUtils::{$cmd_proc}ParamList", array($o_opts));
+            }
+
+            print CLIUtils::textWithColor("Help for \"{$cmd}\":", "bold_green")."\n\n";
+            print "\t".wordwrap($short_help, 90, "\n\t")."\n\n";
+
+
+            if (is_array($opts) && sizeof($opts)) {
+                print CLIUtils::textWithColor("Options for {$cmd} are:", "bold_green")."\n\n";
+                foreach($opts as $opt_format => $opt_desc) {
+                    $output = caFormatCmdOptionsForDisplay($opt_format, $opt_desc);
+                    print $output;
+                }
+            }
+        } else {
+            print CLIUtils::textWithColor("No help is available for \"{$cmd_proc}\"\n\n", "bold_red");
+            foreach($available_cli_opts as $opt_format => $opt_desc) {
+                $output = caFormatCmdOptionsForDisplay($opt_format, $opt_desc);
+                print $output;
+            }
+        }
+        print "\nFor more information visit https://www.collectiveaccess.org\n\n";
+    } else {
+        //
+        // Execute command
+        //
+
+        if ($vb_is_plugin_command) {
+            $settings = array();
+            foreach($command_opts as $opt => $opt_desc) {
+                $opt_tmp = explode('|', $opt);
+                $settings[$opt_tmp[0]] = (string)$o_opts->getOption($opt_tmp[0]);
+            }
+
+            $params = array($plugin_commands[$cmd_proc], $settings, 'CLI');
+            $params = $o_app_plugin_manager->hookCLICaUtilsGetToolWithSettings($params);
+            if ($o_tool = $params['tool']) {
+                if($o_tool->run($cmd_proc, $settings)) {
+                    $error_code = 0;
+                }
+            } else {
+                print CLIUtils::textWithColor("Could not run command \"{$cmd}\"\n", "bold_red");
+            }
+        } else {
+            call_user_func_array("CLIUtils::{$cmd_proc}", array($o_opts));
+            print "\n";
+            if ($n = CLIUtils::numErrors()) {
+                if ($n > 1) {
+                    print CLIUtils::textWithColor(_t("(There were %1 errors)", $n), "yellow")."\n";
+                } else {
+                    print CLIUtils::textWithColor(_t("(1 error occurred)"), "yellow")."\n";
+                }
+            } else {
+                $error_code = 0;
+            }
+            print "\n";
+        }
+    }
+} else {
+    //
+    // List available commands
+    //
+
+    print CLIUtils::textWithColor("Global options\n\n", "bold_green");
+
+    foreach($available_cli_opts as $opt_format => $opt_desc) {
+        $output = caFormatCmdOptionsForDisplay($opt_format, $opt_desc);
+        print $output;
+    }
+    $methods = get_class_methods("CLIUtils");
+
+    if (!$cmd) {
+        print CLIUtils::textWithColor("You must specify a valid command. Valid commands are:", "bold_red")."\n\n";
+    }
+
+    $by_class = array();
+    foreach($methods as $method) {
+        if (!CLIUtils::isCommand($method)) { continue; }
+        if(preg_match("!Help$!", $method)) { continue; }
+        if(preg_match("!ParamList$!", $method)) { continue; }
+        if(preg_match("!UtilityClass$!", $method)) { continue; }
+        $class = call_user_func("CLIUtils::{$method}UtilityClass");
+        $by_class[$class][$method] = CLIUtils::textWithColor(str_pad(str_replace("_", "-", $method), 30), "red")."\t".wordwrap(call_user_func("CLIUtils::{$method}ShortHelp"), 75, "\n\t".str_repeat(" ", 30)."\t");
+    }
+
+    if(is_array($plugin_commands_by_class)) {
+        foreach($plugin_commands_by_class as $class => $commands) {
+            foreach($commands as $command => $command_info) {
+                $by_class[$class][$command] = CLIUtils::textWithColor(str_pad(str_replace("_", "-", $command_info['Command']), 30), "red")."\t".wordwrap($command_info['ShortHelp'], 75, "\n\t".str_repeat(" ", 30)."\t");
+            }
+        }
+    }
+
+    ksort($by_class);
+    foreach($by_class as $class => $methods) {
+        print CLIUtils::textWithColor($class, "bold_green")."\n\n";
+        ksort($methods);
+        foreach($methods as $method => $description) {
+            print "\t{$description}\n\n";
+        }
+    }
+
+    print "\nFor more information visit https://www.collectiveaccess.org\n\n";
+}
+
+# --------------------------------------------------------
+/**
+ * Try to locate and load setup.php bootstrap file. If load fails return false and
+ * let the caller handle telling the user.
+ *
+ * @return bool True if setup.php is located and loaded, false if setup.php could not be found.
+ */
+function _caUtilsLoadSetupPHP() {
+    $setup_path = 'setup.php';
+
+    // try to get hostname off of argv since we need that before anything else in a multi-database installation
+    // also detect the --setup flag, which accepts a path to an alternate setup.php
+    if (isset($_SERVER['argv']) && is_array($_SERVER['argv'])) {
+        foreach($_SERVER['argv'] as $opt) {
+            if (preg_match("!^\-\-hostname\=([A-Za-z0-9_\-\.:]+)!", $opt, $matches) || preg_match("!^\-h\=([A-Za-z0-9_\-\.:]+)!", $opt, $matches)) {
+                $_SERVER['HTTP_HOST'] = $matches[1];
+            }
+            if (preg_match('!^\-\-setup\=([A-Za-z0-9_\-\/\.:]+)$!', $opt, $matches)) {
+                $setup_path = $matches[1];
+            }
+        }
+    }
+
+    // Look for environment variable
+    $path = getenv("COLLECTIVEACCESS_HOME");
+    if (file_exists("{$path}/{$setup_path}")) {
+        require_once("{$path}/{$setup_path}");
+        return true;
+    }
+
+    // Look in current directory and then in parent directories
+    $cwd = explode("/", ltrim(__FILE__, "/")); array_pop($cwd);
+    while(sizeof($cwd) > 0) {
+        $setup_path_fallback = "/".join("/", $cwd)."/".$setup_path;
+        if (file_exists($setup_path_fallback)) {
+            // Guess paths based upon location of setup.php (*should* work)
+            if (!isset($_SERVER['DOCUMENT_ROOT']) || !$_SERVER['DOCUMENT_ROOT']) { $_SERVER['DOCUMENT_ROOT'] = '/'.join("/", $cwd); }
+            $_SERVER['SCRIPT_FILENAME'] = __FILE__;
+            if (!isset($_SERVER['HTTP_HOST']) || !$_SERVER['HTTP_HOST']) { $_SERVER['HTTP_HOST'] = 'localhost'; }
+
+            require_once($setup_path_fallback);
+            return true;
+        }
+        array_pop($cwd);
+    }
+
+    // Give up and die
+    return false;
+}
+# --------------------------------------------------------
+exit($error_code);

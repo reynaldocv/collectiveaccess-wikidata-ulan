@@ -1,0 +1,76 @@
+Running php-build composer
+
+WARNING! Your credentials are stored unencrypted in '/home/runner/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+Pulling docker.pkg.github.com/collectiveaccess/providence/php-actions_composer_providence:php-8.4-gd-zip-intl-bcmath-build2.1.0
+php-8.4-gd-zip-intl-bcmath-build2.1.0: Pulling from collectiveaccess/providence/php-actions_composer_providence
+f18232174bc9: Pulling fs layer
+59a898d30b03: Pulling fs layer
+19779babbc46: Pulling fs layer
+38b0ad748727: Pulling fs layer
+3345949e29f7: Pulling fs layer
+d6991cffe488: Pulling fs layer
+5d4b168095ef: Pulling fs layer
+8862195c6510: Pulling fs layer
+3152086b1cb0: Pulling fs layer
+a09db4db670b: Pulling fs layer
+e6c19c3dc3e0: Pulling fs layer
+3b77c0b4572a: Pulling fs layer
+38b0ad748727: Waiting
+3345949e29f7: Waiting
+8862195c6510: Waiting
+3152086b1cb0: Waiting
+e6c19c3dc3e0: Waiting
+a09db4db670b: Waiting
+3b77c0b4572a: Waiting
+d6991cffe488: Waiting
+5d4b168095ef: Waiting
+19779babbc46: Verifying Checksum
+19779babbc46: Download complete
+f18232174bc9: Verifying Checksum
+f18232174bc9: Download complete
+59a898d30b03: Verifying Checksum
+59a898d30b03: Download complete
+f18232174bc9: Pull complete
+38b0ad748727: Verifying Checksum
+38b0ad748727: Download complete
+d6991cffe488: Verifying Checksum
+d6991cffe488: Download complete
+8862195c6510: Verifying Checksum
+8862195c6510: Download complete
+3345949e29f7: Verifying Checksum
+3345949e29f7: Download complete
+5d4b168095ef: Verifying Checksum
+5d4b168095ef: Download complete
+3152086b1cb0: Verifying Checksum
+3152086b1cb0: Download complete
+e6c19c3dc3e0: Verifying Checksum
+e6c19c3dc3e0: Download complete
+3b77c0b4572a: Verifying Checksum
+3b77c0b4572a: Download complete
+a09db4db670b: Verifying Checksum
+a09db4db670b: Download complete
+59a898d30b03: Pull complete
+19779babbc46: Pull complete
+38b0ad748727: Pull complete
+3345949e29f7: Pull complete
+d6991cffe488: Pull complete
+5d4b168095ef: Pull complete
+8862195c6510: Pull complete
+3152086b1cb0: Pull complete
+a09db4db670b: Pull complete
+e6c19c3dc3e0: Pull complete
+3b77c0b4572a: Pull complete
+Digest: sha256:60b3caa61f9c4105e6f84a02137dc8d5e82dde168347b7dd41d15d5ba1ce992b
+Status: Downloaded newer image for docker.pkg.github.com/collectiveaccess/providence/php-actions_composer_providence:php-8.4-gd-zip-intl-bcmath-build2.1.0
+docker.pkg.github.com/collectiveaccess/providence/php-actions_composer_providence:php-8.4-gd-zip-intl-bcmath-build2.1.0
+Docker tag: docker.pkg.github.com/collectiveaccess/providence/php-actions_composer_providence:php-8.4-gd-zip-intl-bcmath-build2.1.0
+No private keys supplied
+Command: composer install --no-progress --no-interaction
+Skipping env variable PWD
+Skipping env variable HOME
+Skipping env variable SHLVL
+Skipping env variable PATH
