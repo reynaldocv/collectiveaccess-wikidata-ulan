@@ -138,7 +138,7 @@ while($o_items->nextHit()) {
 
             <input type='hidden' name="opt" value="<?php print $option ?>"/>
             <input type="hidden" name="idno" value="<?php print $id ?>"> </input>     
-            <button type="submit" class="btn-search" id="headerSearchButton"> <i class="fa fa-search"> Search </i></button>
+            <button type="submit" class="btn-search" id="headerSearchButton"> <i class="fa fa-search"></i></button>
         
           </form>
         </td>
@@ -226,12 +226,12 @@ print "</table><br><br><br><br><br><br><br>";
 
           if (option == "WIKI")
           {
-            jQuery.getJSON('<?php print caNavUrl($this->request, '*', '*', 'QueryToWikidata'); ?>', {consulta}, function(data) {    
+            jQuery.getJSON('<?php print caNavUrl($this->request, '*', '*', 'QueryToWikidata'); ?>', {consulta}, function(data) { 
+            try{   
               var total = data['search'].length;   
-
               if (total == 1)
               {
-                try{
+                
                   //alert(data['search'][0]['id']);
                   const _code = data['search'][0]['id']; 
                   const _url =  "https://www.wikidata.org/wiki/" + _code; 
@@ -243,18 +243,7 @@ print "</table><br><br><br><br><br><br><br>";
                     jQuery(divStatus).html(data1["status"]); 
                     
                   }); 
-                }
-                catch (error)
-                {
-                  const _code = ""; 
-                  const _url = ""; 
-                  const _comment = "Unknown characters in name..."; 
-                  
-                  jQuery.getJSON('<?php print caNavUrl($this->request, '*', '*', 'SaveCodes'); ?>', {option, idno, _code, _url, _comment}, function(data2) {    
-                    jQuery(divWikicode).html(data2["results"]);  
-                    jQuery(divStatus).html(data2["status"]);  
-                  }); 
-                }
+                           
               }
               else
               {
@@ -268,10 +257,20 @@ print "</table><br><br><br><br><br><br><br>";
                 });
 
               }
-
-
+            }
+            catch (error)
+            {
+              const _code = ""; 
+              const _url = ""; 
+              const _comment = "Unknown characters in name..."; 
               
-              roboto(idx + 1); 
+              jQuery.getJSON('<?php print caNavUrl($this->request, '*', '*', 'SaveCodes'); ?>', {option, idno, _code, _url, _comment}, function(data2) {    
+                jQuery(divWikicode).html(data2["results"]);  
+                jQuery(divStatus).html(data2["status"]);  
+              }); 
+            }
+            setTimeout(() => {roboto(idx + 1)}, 10000);
+              
             }); 
           };
 
@@ -281,11 +280,12 @@ print "</table><br><br><br><br><br><br><br>";
             
             //alert(consulta);
             jQuery.getJSON('<?php print caNavUrl($this->request, '*', '*', 'QueryToULAN'); ?>', {consulta}, function(data) {    
+            try{
               var total = data.length;   
 
               if (total == 1)
               {
-                try{
+                
                   //alert(data['search'][0]['id']);
                   const _ulancode = data[0]['Subject']["value"] 
                   const _code = _ulancode.replace("http://vocab.getty.edu/ulan/", "");
@@ -298,18 +298,8 @@ print "</table><br><br><br><br><br><br><br>";
                     jQuery(divStatus).html(data1["status"]); 
                     
                   }); 
-                }
-                catch (errot){
-                  const _code = ""; 
-                  const _url = ""; 
-                  const _comment = "Unknown characters in name..."; 
-                  
-                  jQuery.getJSON('<?php print caNavUrl($this->request, '*', '*', 'SaveCodes'); ?>', {option, idno, _code, _url, _comment}, function(data2) {    
-                    jQuery(divWikicode).html(data2["results"]);  
-                    jQuery(divStatus).html(data2["status"]);  
-                });
-                }
               }
+              
               else
               {
                 const _code = ""; 
@@ -320,12 +310,19 @@ print "</table><br><br><br><br><br><br><br>";
                   jQuery(divWikicode).html(data2["results"]);  
                   jQuery(divStatus).html(data2["status"]);  
                 });
-
               }
-
-
+            }
+            catch (error){
+              const _code = ""; 
+              const _url = ""; 
+              const _comment = "Unknown characters in name..."; 
               
-              roboto(idx + 1); 
+              jQuery.getJSON('<?php print caNavUrl($this->request, '*', '*', 'SaveCodes'); ?>', {option, idno, _code, _url, _comment}, function(data2) {    
+                jQuery(divWikicode).html(data2["results"]);  
+                jQuery(divStatus).html(data2["status"]);  
+              });
+            }
+            roboto(idx + 1); 
             }); 
           };
 
