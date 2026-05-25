@@ -3,3 +3,4 @@
 2026-05-21 14:52:08 - WARN --> Undefined variable $labels [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/roboto.php:45]
 2026-05-21 14:52:35 - WARN --> Undefined variable $labels [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/roboto.php:45]
 2026-05-21 14:54:10 - WARN --> Undefined variable $labels [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/roboto.php:45]
+2026-05-21 19:20:36 - WARN --> Undefined variable $labels [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/roboto.php:45]

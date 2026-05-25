@@ -75,6 +75,29 @@
   </a>
 </h2>
 
+<h3 style="color:#1ab3c8;"> Get Birthday: </h3>
+<h2>
+<a href="<?php print caNavUrl($this->request, '*', 'Import', 'Birthday'); ?>" class="form-button 1741353253">
+      <span class="form-button">
+        <i class="caIcon fa fa-paint-brush" style="font-size: 15px;"></i>List of artists and their dates (birthday and death)
+      </span>
+  </a>
+</h2>
+<h2>
+  <a href="<?php print caNavUrl($this->request, '*', 'Import', 'UlanBirthday'); ?>" class="form-button 1741353253">
+      <span class="form-button">
+        <i class="caIcon fa fa-paint-brush" style="font-size: 15px;"></i>ULAN
+      </span>
+  </a>
+</h2>
+<h2>
+  <a href="<?php print caNavUrl($this->request, '*', 'Import', 'WikiBirthday'); ?>" class="form-button 1741353253">
+      <span class="form-button">
+        <i class="caIcon fa fa-rocket " style="font-size: 15px;"></i> WIKI
+      </span>
+  </a>
+</h2>
+
 
 
 

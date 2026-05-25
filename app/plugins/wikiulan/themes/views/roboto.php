@@ -45,7 +45,7 @@ if ($option == "ULAN")
                 <input type="text" id="myFilter" value="<?php print $labels ?>" size="50">
               </div>
             </div>
-            <input type="text" id="start" value="0" size="3">           
+            <input type="text" id="start" value="1" size="3">           
             <div id="div_btn_consulta">                 
               <input type="submit" value="Consultar" id="btn_consultar" onclick='proccess()'>
             </div>

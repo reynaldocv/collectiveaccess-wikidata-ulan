@@ -82,6 +82,14 @@ class ImportController extends ActionController {
 		
 		$this->render("roboto.php");
 	}
+	
+	public function Birthday() {
+		$o_search = new EntitySearch();
+		$o_items = $o_search->search('*'); 
+
+		$this->view->setVar('items', $o_items);		
+		$this->render("allBirthday.php");
+	}
 
 	public function UlanRoboto() {
 		$o_search = new EntitySearch();
@@ -91,6 +99,27 @@ class ImportController extends ActionController {
 		$this->view->setVar('option', "ULAN");
 		
 		$this->render("roboto.php");
+	}
+
+	public function WikiBirthday() {
+		$o_search = new EntitySearch();
+		$o_items = $o_search->search('*'); 
+
+		$this->view->setVar('items', $o_items);
+		$this->view->setVar('option', "WIKI");
+
+		
+		$this->render("birthday.php");
+	}
+
+	public function UlanBirthday() {
+		$o_search = new EntitySearch();
+		$o_items = $o_search->search('*'); 
+
+		$this->view->setVar('items', $o_items);
+		$this->view->setVar('option', "ULAN");
+		
+		$this->render("birthday.php");
 	}
 
 	public function WikiLista() {
@@ -500,6 +529,75 @@ class ImportController extends ActionController {
 		}
 
 		
+	}
+	public function SaveBirthday()
+	{	
+		try {
+			$option = $this->request->getParameter('option', pString);
+			$idno = $this->request->getParameter('idno', pString);
+
+			$_code 		= $this->request->getParameter('_code', pString);			
+			$_url  		= $this->request->getParameter('_url', pString);
+			$_comment 	= $this->request->getParameter('_comment', pString);
+			
+			$item= new ca_entities($idno);
+
+			if ($option == "WIKI")
+			{	
+				$newData = array("wikicode" => $_code, "wikiurl" => $_url, "wikicomment" => $_comment);
+				$item->replaceAttribute($newData, 'wiki');	
+			
+			}
+			if ($option == "ULAN")
+			{
+				$newData = array("ulancode" => $_code, "ulanurl" => $_url, "ulancomment" => $_comment);
+				$item->replaceAttribute($newData, 'ulan');	
+			}	
+
+			$item->setMode(ACCESS_WRITE);			
+			$item->update();
+
+			$_results = "No code saved!";
+			$_status = "No code saved!";
+			$_msg = "No code saved"; 
+
+			if ($option == "WIKI")
+			{	
+				$_code = $item->get("ca_entities.wiki.wikicode");
+				$_url = $item->get("ca_entities.wiki.wikiurl");
+				$_info = $item->get("ca_entities.wiki");
+
+				$_results = "<a href='$_url' target='_blank'>$_code</a>";
+				$_status = $item->get("ca_entities.wiki.wikicomment");
+				$_msg = "Operacion realizada com sucesso...<br> WIKIDATA: $_info";
+					
+			}
+			if ($option == "ULAN")
+			{
+				$_code = $item->get("ca_entities.ulan.ulancode");
+				$_url = $item->get("ca_entities.ulan.ulanurl");
+				$_info = $item->get("ca_entities.ulan");
+
+				$_results = "<a href='$_url' target='_blank'>$_code</a>";
+				$_status = $item->get("ca_entities.ulan.ulancomment");
+				$_msg = "Operacion realizada com sucesso...<br> ULAN: $_info";
+				
+			}
+			
+			$array = array("results" => $_results, "status" => $_status, "msg" => $_msg);		
+			$this->view->setVar('results', $array);
+
+			$this->render("jsonresult.php");
+			
+		
+		}
+		 catch (Exception $e) {
+			$array = array("results" => "Error!!!");			
+			$this->view->setVar('results', $array);
+			$this->render("jsonresult.php");
+		}
+
+		
 	}	
 	public function Test()
 	{	
@@ -572,5 +670,139 @@ class ImportController extends ActionController {
 	}
 	public function ulan(){	
 		$this->render("wikiulan/ulan.php");
+	}
+	public function QueryToUlanBirthday()
+	{
+		$code = $this->request->getParameter('code', pString);
+		$idno = $this->request->getParameter('idno', pString);
+
+		if (trim($code) !== "")
+		{
+
+			$url = "https://vocab.getty.edu/ulan/$code.json";
+
+			// 1. Initialize cURL session
+			$ch = curl_init();
+
+			// 2. Set options
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return the transfer as a string
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects if any
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);          // Max execution time in seconds
+			curl_setopt($ch, CURLOPT_USERAGENT, 'PHP Script'); // Some APIs require a user-agent header
+
+			// 3. Execute the request
+			$response = curl_exec($ch);
+
+			// 4. Check for errors
+			if (curl_errno($ch)) {
+				$array = array("results" => "Error!!!");			
+				$this->view->setVar('results', $array);				
+				
+			} else {
+				// 5. Decode the JSON string into an associative array
+				$data = json_decode($response, true);
+				
+				$birth_year = substr($data["born"]["timespan"]["begin_of_the_begin"], 0, 4);
+				$death_year = substr($data["died"]["timespan"]["begin_of_the_begin"], 0, 4);
+
+				if ($death_year >= "2027")
+					$death_year = ""; 
+
+				$t_entity = new ca_entities();
+
+				if ($t_entity->load(array('idno' => $idno))) {
+		
+					// Success: The record exists and is now loaded into the $t_entity object
+					$t_entity->replaceAttribute(
+						array(
+							'ubirth' => $birth_year, 
+							'udeath' => $death_year
+						),
+						"ulanDates" 					
+					);				
+					$t_entity->UPDATE(); 
+					
+					$msg = $t_entity->get("ca_entities.ulanDates");
+					$this->view->setVar('results', $msg);
+				
+				}
+				else{
+					$this->view->setVar('results', "Unknown idno");
+				}
+				
+			}
+			curl_close($ch);
+		}	
+		else{
+			$this->view->setVar('results', "Unknown ulan code");
+		}
+			
+		
+		$this->render("jsonresult.php");
+	}
+	public function QueryToWikiBirthday(){
+		$code = $this->request->getParameter('code', pString);
+		$idno = $this->request->getParameter('idno', pString);
+
+		if (trim($code) !== "")
+		{
+
+			$sparql = "
+			SELECT ?birthday ?deathday WHERE {  
+			wd:{$code} wdt:P569 ?birthday .
+			OPTIONAL { wd:{$code} wdt:P570 ?deathday . }
+			}
+			";
+
+			// 3. Encode for URL
+			$url = 'https://query.wikidata.org/sparql?query=' . urlencode($sparql) . '&format=json';
+
+			// 4. Set Headers (Important for Wikidata)
+			$opts = [
+				"http" => [
+					"method" => "GET",
+					"header" => "Accept: application/sparql-results+json\r\n" .
+								"User-Agent: MyPHPApp/1.0\r\n" // Best practice to include User-Agent
+				]
+			];
+			$context = stream_context_create($opts);
+
+			// 5. Fetch and Parse
+			$response = file_get_contents($url, false, $context);
+			$data = json_decode($response, true);
+			$this->view->setVar('results', "Unknown idno");
+
+			$t_entity = new ca_entities();
+			// 6. Extract Birthday
+			if ($t_entity->load(array('idno' => $idno))){
+				$this->view->setVar('results', "No data...");
+				if (!empty($data['results']['bindings'])) {
+					$bindings = $data['results']['bindings'][0]; // Fetch first matching row
+					
+					$birthday = isset($bindings['birthday']['value']) ? $bindings['birthday']['value'] : '';
+					$deathday = isset($bindings['deathday']['value']) ? $bindings['deathday']['value'] : '';
+
+					$t_entity->replaceAttribute(
+							array(
+								'wbirth' => substr($birthday, 0, 10), 
+								'wdeath' => substr($deathday, 0, 10)
+							),
+							"wikiDates" 					
+						);				
+					$t_entity->UPDATE(); 
+					
+					$msg = $t_entity->get("ca_entities.wikiDates");
+					
+					$this->view->setVar('results', $msg);
+				}
+				
+			}	
+		}
+		else{
+			$this->view->setVar('results', "Unknown wiki code");
+		}
+
+		$this->render("jsonresult.php");		
 	}
 }

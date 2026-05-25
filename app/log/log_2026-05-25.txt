@@ -1,0 +1,4 @@
+2026-05-25 11:07:14 - INFO --> [LOGF] Failed login with redirect for user id '' (/collectiveaccess-wikidata-ulan/index.php/wikiulan/Import/WikiRoboto); IP=::1; user agent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36' (AUTH)
+2026-05-25 11:07:28 - INFO --> [LOGIN] Successful login for 'administrator'; IP=::1; user agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 (Auth)
+2026-05-25 12:49:35 - ERROR --> ApplicationException: View does not exist
+2026-05-25 12:50:08 - ERROR --> ApplicationException: View does not exist
