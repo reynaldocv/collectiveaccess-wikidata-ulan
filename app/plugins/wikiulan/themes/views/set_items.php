@@ -105,20 +105,9 @@ array('dontURLEncodeParameters' => true)); ?>
 <br><br><br><br><br><br>
 
 
-<script>
-      var menu = "<?php print $menu ?>";
-      jQuery("#leftNavSidebar").html(menu);
-
-      $(document).ready(function(){
-        $("#myFilter").on("keyup", function() {
-          var value = $(this).val().toLowerCase();
-          $("#myTable tr").filter(function() {
-            
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-          });
-        });
-      });
-</script>
+  <?php 
+    include(leftmenu.php); 
+  ?>
 
 
  <script>

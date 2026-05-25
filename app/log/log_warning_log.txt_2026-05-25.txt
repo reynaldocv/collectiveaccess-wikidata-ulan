@@ -13,3 +13,6 @@
 2026-05-25 13:10:07 - WARN --> Undefined variable $cnt [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/allBirthday.php:69]
 2026-05-25 13:12:41 - WARN --> Undefined variable $cnt [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/allBirthday.php:69]
 2026-05-25 14:42:34 - WARN --> Undefined variable $cnt [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/allBirthday.php:69]
+2026-05-25 15:28:44 - WARN --> Undefined variable $labels [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/roboto.php:45]
+2026-05-25 15:30:29 - WARN --> Undefined variable $labels [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/roboto.php:45]
+2026-05-25 15:31:49 - WARN --> Undefined variable $labels [/var/www/html/collectiveaccess-wikidata-ulan/app/plugins/wikiulan/themes/views/roboto.php:45]

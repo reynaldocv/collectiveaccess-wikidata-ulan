@@ -121,39 +121,13 @@
         </div>  
       </div>
 
-  <?php 
-    $idno = $item->get("rank"); 
-    #Criando o menu
-    $link1 = caNavUrl($this->request, 'consulthor', 'Import', 'Index');
-    $link2 = caNavUrl($this->request, 'editor', 'entities/EntityEditor/Edit/entity_id', $idno);
-    $link3 = caNavUrl($this->request, 'consulthor', 'Import', 'ShowProfile?idno='.$idno.'&opt=WIKI');
-    $link4 = caNavUrl($this->request, 'consulthor', 'Import', 'ShowProfile?idno='.$idno.'&opt=ULAN');
-    
-    $link5 = caNavUrl($this->request, 'consulthor', 'Import', 'WikiLista');
-    $link6 = caNavUrl($this->request, 'consulthor', 'Import', 'WikiRoboto');
-    
-    $link7 = caNavUrl($this->request, 'consulthor', 'Import', 'UlanLista');
-    $link8 = caNavUrl($this->request, 'consulthor', 'Import', 'UlanRoboto');
-
-    $menu = " ";
-    $menu .= "<br><h3><a class='sf-menu-enabled' href='$link1'> <i class='fa fa-home' style='font-size: 25px;'></i> Index </a> </h3><hr>";
-    $menu .= "<h2><a class='sf-menu-enabled'  style='padding-left:40px' href='$link2' target='blank'><i class='fa fa-edit' style='font-size: 20px;'></i>Edit</a> </h2>";
-    $menu .= "<h2><a class='sf-menu-enabled'  style='padding-left:40px' href='$link3'><i class='fa fa-wikipedia-w' style='font-size: 20px;'></i>Wikipedia</a> </h2>";
-    $menu .= "<h2><a class='sf-menu-enabled'  style='padding-left:40px' href='$link4'><i class='fa fa-paint-brush' style='font-size: 20px;'></i>Getty (ULAN) </a> </h2>";
-
-    $menu .= "<hr><h3><a class='sf-menu-enabled' href='$link5'> <i class='fa fa-wikipedia-w' style='font-size: 20px;'></i> Wikipedia (Artistas) </a> </h3>";
-    $menu .= "<br><h3><a class='sf-menu-enabled' href='$link6'> <i class='fa fa-rocket' style='font-size: 20px;'></i> Wikipedia (Rocket) </a> </h3>";
-
-    $menu .= "<br><h3><a class='sf-menu-enabled' href='$link7'> <i class='fa fa-paint-brush' style='font-size: 20px;'></i> Getty ULAN (Artistas) </a> </h3>";
-    $menu .= "<br><h3><a class='sf-menu-enabled' href='$link8'> <i class='fa fa-rocket' style='font-size: 20px;'></i> Getty ULAN (Rocket) </a> </h3><hr>";
-
-    
-  ?>
+  
   <br><br><br><br>
+  <?php 
+    include("leftmenu.php"); 
+  ?>
 
-  <script>
-    var menu = "<?php print $menu ?>";
-    jQuery("#leftNavSidebar").html(menu);
+  <script>   
     
     const formulario = document.querySelector("#formulario")
     var container = document.querySelector("#container");

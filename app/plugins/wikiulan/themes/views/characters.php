@@ -91,10 +91,17 @@ while($o_items->nextHit()) {
 
 print "</table><br><br><br><br><br><br><br>";
 
+
+
+
 /*while($o_items->nextHit()) {
     print "Hit ".$count.": ".$o_items->get('ca_objects.preferred_labels.name')."<br/>\n";
     $count++;
 }*/
+?>
+
+<?php 
+  include(leftmenu.php); 
 ?>
 
 <script>
